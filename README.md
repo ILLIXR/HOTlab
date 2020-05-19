@@ -1,7 +1,7 @@
 
 # Computational Holography
 
-Part of [ILLIXR](https://github.com/ILLIXR/ILLIXR), the Illinios Extended Reality Benchmark Suite. This component is responsible for calculating image holograms (per-pixel phase masks) using the Weighted Gerchberg–Saxton(GSW) algorithm.
+Part of [ILLIXR](https://github.com/ILLIXR/ILLIXR), the Illinios Extended Reality Benchmark Suite. This component is responsible for calculating image holograms (per-pixel phase masks) using the Weighted Gerchberg–Saxton (GSW) algorithm.
 
 # Files
 
@@ -9,23 +9,23 @@ Part of [ILLIXR](https://github.com/ILLIXR/ILLIXR), the Illinios Extended Realit
 
 ### generateHologram
 
-Host side kernel launch 
+Host side kernel launch code.
 
 ### propagateToSpotPositions
 
-CUDA kernel that propagates from the SLM phases to the spot positions using Fresnel summation.
+CUDA kernel that propagates phases from the SLM plane to the depth plane using Fresnel summation.
 
 ### propagateToSpotSum
 
-CUDA kernel that sums up the per thread block result from propagateToSpotPositions kernel.
+CUDA kernel that sums up the per-thread block results from the propagateToSpotPositions() kernel.
 
 ### propagateToSLM
 
-CUDA kernel that calculates the error function of depth spots and updates the SLM phases.
+CUDA kernel that calculates the error function at the depth planes and updates the SLM phases.
 
 ## goldenHologram.<span></span>cu
 
-The original hologram implementation we are improving from.
+The original hologram implementation. This implementation did not support arbitrary SLM sizes and colored holograms.
 
 # Installation & Usage
 
@@ -34,13 +34,13 @@ Under `C/source/`
     make all
     make jetson
 
-Make all is compiling using SM75 architecture, while jetson is using SM70 architecture. To run this code on a older NVIDIA GPU,  please change the SM architecture accordingly.
+`make all` compiles for the SM75 architecture, while `make jetson` compiles for SM70. To run this code on a older NVIDIA GPU,  please change the SM architecture accordingly.
 
-To run our modified hologram code,
+To run our modified hologram code:
 
     ./hologram
 
-To run the original hologram code.
+To run the original hologram code:
 
     ./goldenHologram
 
