@@ -19,7 +19,7 @@ using std::atomic;
 
 class hologram : public plugin {
 public:
-	hologram(phonebook *pb)
+	hologram(const phonebook *pb)
 		: sb{pb->lookup_impl<switchboard>()}
 		, _m_in{sb->get_reader<hologram_input>("hologram_in")}
 		, _m_out{sb->get_writer<hologram_output>("hologram_out")}
@@ -66,7 +66,7 @@ public:
 	}
 
 private:
-	switchboard *sb;
+	const std::shared<switchboard>*sb;
 	start_end_logger* logger;
 	switchboard::reader<hologram_input> _m_in;
 	switchboard::writer<hologram_output> _m_out;
