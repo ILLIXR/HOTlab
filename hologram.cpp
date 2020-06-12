@@ -66,7 +66,7 @@ public:
 	}
 
 private:
-	const std::shared<switchboard>*sb;
+	const std::shared_ptr<switchboard> sb;
 	start_end_logger* logger;
 	switchboard::reader<hologram_input> _m_in;
 	switchboard::writer<hologram_output> _m_out;
