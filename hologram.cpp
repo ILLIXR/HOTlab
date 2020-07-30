@@ -1,4 +1,5 @@
 #include "common/plugin.hpp"
+#include "common/threadloop.hpp"
 #include "common/switchboard.hpp"
 #include "common/phonebook.hpp"
 #include "common/data_format.hpp"
@@ -6,6 +7,7 @@
 #include "common/threadloop.hpp"
 #include "hologram.h"
 #include <chrono>
+#include <memory>
 #include <thread>
 #include <cstdio>
 #include <cstdlib>
@@ -32,7 +34,7 @@ public:
 	{
 		bool ret = HLG_initailize();
 		if (!ret) {
-			throw std::runtime_error{"Hologram Initialization failed (" + std::to_string(ret) + ")"};
+			throw std::runtime_error{"Hologram Initialization failed"};
 		}
 	}
 
@@ -57,18 +59,15 @@ public:
 	void _p_one_iteration() override {
 		PRINT_WALL_TIME_FOR_THIS_BLOCK("hologram_wall");
 		//printf("[Hologram] Running sample %ld, samples dropped since last sample: %ld\n", _stat_processed, _stat_missed);
-		logger.log_start(std::chrono::high_resolution_clock::now());
 		HLG_process();
-		logger.log_end(std::chrono::high_resolution_clock::now());
 	}
 
 private:
-	const std::shared_ptr<switchboard>sb;
+	const std::shared_ptr<switchboard> sb;
 	unique_ptr<reader_latest<hologram_input>> _m_in;
 	unique_ptr<writer<hologram_output>> _m_out;
 	long long _seq_expect, _stat_processed, _stat_missed;
 	start_end_logger logger;
-
 };
 
 
