@@ -1,4 +1,5 @@
 #include "common/plugin.hpp"
+#include "common/threadloop.hpp"
 #include "common/switchboard.hpp"
 #include "common/phonebook.hpp"
 #include "common/data_format.hpp"
@@ -6,6 +7,7 @@
 #include "common/threadloop.hpp"
 #include "hologram.h"
 #include <chrono>
+#include <memory>
 #include <thread>
 #include <cstdio>
 #include <cstdlib>
