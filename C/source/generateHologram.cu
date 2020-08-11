@@ -886,7 +886,11 @@ int generateHologram(unsigned char * const hologram, // hologram to send to SLM
 
     //printf("Starting Fresnel...\n");
     t = getClock();
+    cudaEvent_t start, stop;
+    cudaEventCreate(&start);
+    cudaEventCreate(&stop);
 
+    cudaEventRecord(start, 0);
     for (int l = 0; l < numIterations; l++) {
         //printf("Iteration %d\n", l);
         propagateToSpotPositions<<<toSpotGridDim, toSpotBlockDim>>>(d_hologramPhase,
@@ -933,6 +937,12 @@ int generateHologram(unsigned char * const hologram, // hologram to send to SLM
         M_CHECK_ERROR();
         cudaDeviceSynchronize();
     }
+    cudaEventRecord(stop, 0);
+
+    cudaEventSynchronize(stop);
+    float elapsedTime;
+    cudaEventElapsedTime(&elapsedTime, start, stop);
+    printf("hologram_gpu,%f", elapsedTime);
 
     // if (saveSpotI)
     //     M_SAFE_CALL(cudaMemcpy(interAmps, d_obtainedI, weightMemSize, cudaMemcpyDeviceToHost));
