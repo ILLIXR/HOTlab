@@ -37,8 +37,8 @@
 #define BLOCK_SIZE 256
 #define BLOCK_STRIDE 4
 
-#define SLM_HEIGHT 1024
-#define SLM_WIDTH 2048
+#define SLM_HEIGHT 1440
+#define SLM_WIDTH 2560
 #define NUM_PIXELS (SLM_HEIGHT * SLM_WIDTH)
 #define NUM_CHANNELS 3
 #define NUM_SPOTS 2
