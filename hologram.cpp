@@ -95,7 +95,7 @@ private:
 	std::vector<std::string> timers;
 	std::map<unsigned long, float> m1;
 	std::map<unsigned long, float> m2;
-	float total_gpu_time;
+	float total_gpu_time = 0;
 };
 
 
