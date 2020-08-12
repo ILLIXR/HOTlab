@@ -12,6 +12,7 @@
 #include <atomic>
 
 #include "stats.h"
+#include <cuda_runtime_api.h>
 
 using namespace ILLIXR;
 using std::unique_ptr;
@@ -36,6 +37,13 @@ public:
 		}
 	}
 
+	// destructor
+	virtual ~hologram() override {
+		for (int i = 0; i < timers.size(); ++i)  {
+			std::cout << timers[i] << std::endl;
+		}
+	}
+
 	virtual skip_option _p_should_skip() override {
 		auto in = _m_in->get_latest_ro();
 		if (!in || in->seq == _seq_expect-1) {
@@ -53,13 +61,28 @@ public:
 		}
 	}
 
-
 	void _p_one_iteration() override {
-		PRINT_WALL_TIME_FOR_THIS_BLOCK("hologram_wall");
-		//printf("[Hologram] Running sample %ld, samples dropped since last sample: %ld\n", _stat_processed, _stat_missed);
-		logger.log_start(std::chrono::high_resolution_clock::now());
+		cudaEvent_t start, stop;
+    cudaEventCreate(&start);
+    cudaEventCreate(&stop);
+		std::stringstream sstm;
+
+		sstm << "gpu_timer,hologram,start," << iteration_no << "," << total_gpu_time;
+		std::string timerStart = sstm.str();
+		timers.push_back(timerStart);
+
+		cudaEventRecord(start, 0);
 		HLG_process();
-		logger.log_end(std::chrono::high_resolution_clock::now());
+		cudaEventRecord(stop, 0);
+
+		cudaEventSynchronize(stop);
+    float elapsed_time;
+    cudaEventElapsedTime(&elapsed_time, start, stop);
+    total_gpu_time += elapsed_time;
+
+		sstm << "gpu_timer,hologram,stop," << iteration_no << "," << total_gpu_time;
+		std::string timerEnd = sstm.str();
+		timers.push_back(timerEnd);
 	}
 
 private:
@@ -69,6 +92,8 @@ private:
 	long long _seq_expect, _stat_processed, _stat_missed;
 	start_end_logger logger;
 
+	std::vector<std::string> timers;
+	float total_gpu_time;
 };
 
 

@@ -24,13 +24,13 @@ $(DBG_SO_NAME): dbg_so solo
 $(OPT_SO_NAME): opt_so solo
 
 dbg_so: hologram.cpp C/source/generateHologram.cu C/source/stats.c C/source/hologram.h C/source/stats.h
-	$(CXX) $(CXXFLAGS) $(DBG_FLAGS) -IC/source -c hologram.cpp -o hologram.o
+	$(CXX) $(CXXFLAGS) $(DBG_FLAGS) -IC/source I/usr/local/cuda/include -c hologram.cpp -o hologram.o
 	$(CC) $(CFLAGS) $(DBG_FLAGS) -c C/source/stats.c -o stats.o
 	$(NVCC) $(NVCCFLAGS) $(NVCC_DBG_FLAGS) --compiler-options "$(CFLAGS) $(DBG_FLAGS)" --linker-options "$(LDFLAGS)" hologram.o stats.o C/source/generateHologram.cu -shared -o $(DBG_SO_NAME)
 
 
 opt_so: hologram.cpp C/source/generateHologram.cu C/source/stats.c C/source/hologram.h C/source/stats.h
-	$(CXX) $(CXXFLAGS) $(OPT_FLAGS) -IC/source -c hologram.cpp -o hologram.o
+	$(CXX) $(CXXFLAGS) $(OPT_FLAGS) -IC/source -I/usr/local/cuda/include -c hologram.cpp -o hologram.o
 	$(CC) $(CFLAGS) $(OPT_FLAGS) -c C/source/stats.c -o stats.o
 	$(NVCC) $(NVCCFLAGS) $(NVCC_OPT_FLAGS) --compiler-options "$(CFLAGS) $(OPT_FLAGS)" --linker-options "$(LDFLAGS)" hologram.o stats.o C/source/generateHologram.cu -shared -o $(OPT_SO_NAME)
 
