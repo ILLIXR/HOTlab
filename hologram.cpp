@@ -40,12 +40,9 @@ public:
 
 	// destructor
 	virtual ~hologram() override {
-		for (auto item : m1) {
-			std::cout << "gpu_timer,hologram,start," << item.first << "," << item.second;
-		}
-
-		for (auto item : m2) {
-			std::cout << "gpu_timer,hologram,stop," << item.first << "," << item.second;
+		for (int i = 0; i < startDurations.size(); ++i) {
+			std::cout << "gpu_timer,hologram,start," << i << "," << startDurations[i];
+			std::cout << "gpu_timer,hologram,stop," << i << "," << stopDurations[i];
 		}
 	}
 
@@ -71,7 +68,7 @@ public:
     cudaEventCreate(&start);
     cudaEventCreate(&stop);
 
-		m1[iteration_no] = total_gpu_time;
+		startDurations.push_back(total_gpu_time);
 
 		cudaEventRecord(start, 0);
 		HLG_process();
@@ -82,7 +79,7 @@ public:
     cudaEventElapsedTime(&elapsed_time, start, stop);
     total_gpu_time += elapsed_time;
 
-		m2[iteration_no] = total_gpu_time;
+		stopDurations.push_back(total_gpu_time);
 	}
 
 private:
@@ -92,9 +89,8 @@ private:
 	long long _seq_expect, _stat_processed, _stat_missed;
 	start_end_logger logger;
 
-	std::vector<std::string> timers;
-	std::map<unsigned long, float> m1;
-	std::map<unsigned long, float> m2;
+	std::vector<float> startDurations;
+	std::vector<float> stopDurations;
 	float total_gpu_time = 0;
 };
 
