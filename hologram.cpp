@@ -41,8 +41,8 @@ public:
 	// destructor
 	virtual ~hologram() override {
 		for (int i = 0; i < startDurations.size(); ++i) {
-			std::cout << "gpu_timer,hologram,start," << i << "," << startDurations[i];
-			std::cout << "gpu_timer,hologram,stop," << i << "," << stopDurations[i];
+			std::cout << "gpu_timer,hologram,start," << i << "," << startDurations[i] << "\n";
+			std::cout << "gpu_timer,hologram,stop," << i << "," << stopDurations[i] << "\n";
 		}
 	}
 
