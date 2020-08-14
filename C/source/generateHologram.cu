@@ -885,12 +885,8 @@ int generateHologram(unsigned char * const hologram, // hologram to send to SLM
     dim3 toSLMBlockDim(BLOCK_SIZE, 1, 1);
 
     //printf("Starting Fresnel...\n");
-    t = getClock();
-    cudaEvent_t start, stop;
-    cudaEventCreate(&start);
-    cudaEventCreate(&stop);
+    //t = getClock();
 
-    cudaEventRecord(start, 0);
     for (int l = 0; l < numIterations; l++) {
         //printf("Iteration %d\n", l);
         propagateToSpotPositions<<<toSpotGridDim, toSpotBlockDim>>>(d_hologramPhase,
@@ -941,12 +937,6 @@ int generateHologram(unsigned char * const hologram, // hologram to send to SLM
     // to finish.
     cudaDeviceSynchronize();
 
-    cudaEventRecord(stop, 0);
-    cudaEventSynchronize(stop);
-    float elapsedTime;
-    cudaEventElapsedTime(&elapsedTime, start, stop);
-    printf("hologram_gpu,%f", elapsedTime);
-
     // if (saveSpotI)
     //     M_SAFE_CALL(cudaMemcpy(interAmps, d_obtainedI, weightMemSize, cudaMemcpyDeviceToHost));
     // else
@@ -959,8 +949,8 @@ int generateHologram(unsigned char * const hologram, // hologram to send to SLM
     // In any case, this memcpy somewhat captures the data movement that is supposed to occur in
     // a proper system.
     M_SAFE_CALL(cudaMemcpyAsync(hologram, d_hologram, hologramMemSize, cudaMemcpyDeviceToHost));
-    t = getClock() - t;
 
+    //t = getClock() - t;
     //printf("Total time = %12.8lf seconds\n", t);
     //printf("Time/iteration = %12.8lf seconds\n", t/((double) numIterations));
     // printf("%12.8lf\n", t);
