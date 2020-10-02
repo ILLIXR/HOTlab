@@ -24,8 +24,7 @@ public:
 	hologram(std::string name_, phonebook* pb_)
 		: threadloop{name_, pb_}
 		, sb{pb->lookup_impl<switchboard>()}
-		, _m_in{sb->subscribe_latest<hologram_input>("hologram_in")}
-		, _m_out{sb->publish<hologram_output>("hologram_out")}
+		, _m_in{sb->get_reader<switchboard::event_wrapper<std::size_t>>("hologram_in")}
 		, _seq_expect(1)
 		, _stat_processed(0)
 		, _stat_missed(0)
@@ -48,7 +47,7 @@ public:
 	}
 
 	virtual skip_option _p_should_skip() override {
-		auto in = _m_in->get_latest_ro();
+		auto in = **_m_in.get();
 		if (!in || in->seq == _seq_expect-1) {
 			// No new data, sleep
 			return skip_option::skip_and_yield;
@@ -81,8 +80,7 @@ public:
 
 private:
 	const std::shared_ptr<switchboard> sb;
-	unique_ptr<reader_latest<hologram_input>> _m_in;
-	unique_ptr<writer<hologram_output>> _m_out;
+	switchboard::reader_latest<switchboard::event_wrapper<std::size_t>> _m_in;
 	long long _seq_expect, _stat_processed, _stat_missed;
 	start_end_logger logger;
 
