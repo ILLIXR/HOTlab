@@ -21,7 +21,7 @@
 */
 
 // Activates a number of custom debug macros
-#define M_CUDA_DEBUG
+//#define M_CUDA_DEBUG
 //#define M_CORE_DEBUG
 
 #include "hologram.h"
@@ -896,7 +896,7 @@ int generateHologram(unsigned char * const hologram, // hologram to send to SLM
                                                                     d_local_spotRe,
                                                                     d_local_spotIm);
         M_CHECK_ERROR();
-        cudaDeviceSynchronize();
+
         // Second level parallel reduction
         propagateToSpotSum<<<toSpotSumGridDim, toSpotSumBlockDim>>>(d_local_spotRe,
                                                                     d_local_spotIm,
@@ -905,7 +905,6 @@ int generateHologram(unsigned char * const hologram, // hologram to send to SLM
                                                                     d_spotRe,
                                                                     d_spotIm);
         M_CHECK_ERROR();
-        cudaDeviceSynchronize();
 
         propagateToSLM<<<toSLMGridDim, toSLMBlockDim>>>(d_hologram,
                                                         d_hologramPhase,
@@ -932,14 +931,24 @@ int generateHologram(unsigned char * const hologram, // hologram to send to SLM
                                                         useRPC,
                                                         alpha);
         M_CHECK_ERROR();
-        cudaDeviceSynchronize();
     }
 
-    if (saveSpotI)
-        M_SAFE_CALL(cudaMemcpy(interAmps, d_obtainedI, weightMemSize, cudaMemcpyDeviceToHost));
-    else
-        M_SAFE_CALL(cudaMemcpy(interAmps, d_weights, weightMemSize, cudaMemcpyDeviceToHost));
-    M_SAFE_CALL(cudaMemcpy(hologram, d_hologram, hologramMemSize, cudaMemcpyDeviceToHost));
+    // Only need to synchronize once all the kernels have been launched
+    cudaDeviceSynchronize();
+
+    // This memcpy emulates the shipping off of the hologram to the display, and is thus supposed
+    // to be asynchronous with respect to hologram. However, it is not because... CUDA. Host <->
+    // Device memcpys are always synchronous unless they are to/from pinned host memory, which is
+    // not the case in hologram.
+    // In any case, this memcpy somewhat captures the data movement that is supposed to occur in
+    // a proper system.
+    M_SAFE_CALL(cudaMemcpyAsync(hologram, d_hologram, hologramMemSize, cudaMemcpyDeviceToHost));
+
+    //if (saveSpotI)
+    //    M_SAFE_CALL(cudaMemcpy(interAmps, d_obtainedI, weightMemSize, cudaMemcpyDeviceToHost));
+    //else
+    //    M_SAFE_CALL(cudaMemcpy(interAmps, d_weights, weightMemSize, cudaMemcpyDeviceToHost));
+
     t = getClock() - t;
     printf("Total time = %12.8lf seconds\n", t);
     printf("Time/iteration = %12.8lf seconds\n", t/((double) numIterations));
