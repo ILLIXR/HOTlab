@@ -25,7 +25,6 @@ public:
         : threadloop{name_, pb_}
         , sb{pb->lookup_impl<switchboard>()}
         , _m_in{sb->get_reader<hologram_input>("hologram_in")}
-        , _m_out{sb->get_writer<hologram_output>("hologram_out")}
         , _seq_expect{1}
         , _stat_processed{0}
         , _stat_missed{0}
@@ -81,7 +80,6 @@ public:
 private:
     const std::shared_ptr<switchboard> sb;
     switchboard::reader<hologram_input> _m_in;
-    switchboard::writer<hologram_output> _m_out;
     long long _seq_expect;
     long long _stat_processed;
     long long _stat_missed;
