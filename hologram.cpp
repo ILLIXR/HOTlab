@@ -22,7 +22,7 @@ public:
         cudaEventCreate(&_start);
         cudaEventCreate(&_stop);
 
-        sb->schedule<hologram_input>(id, "hologram_input", [&](switchboard::ptr<const hologram_input> datum, size_t) {
+        sb->schedule<hologram_input>(id, "hologram_in", [&](switchboard::ptr<const hologram_input> datum, size_t) {
             process(datum);
         });
     }
@@ -47,6 +47,7 @@ public:
         float elapsed_time;
         cudaEventElapsedTime(&elapsed_time, _start, _stop);
         _total_gpu_time += elapsed_time;
+        std::cout << elapsed_time << std::endl;
 
         _stop_durations.push_back(_total_gpu_time);
     }
