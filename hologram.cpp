@@ -47,7 +47,6 @@ public:
         float elapsed_time;
         cudaEventElapsedTime(&elapsed_time, _start, _stop);
         _total_gpu_time += elapsed_time;
-        std::cout << elapsed_time << std::endl;
 
         _stop_durations.push_back(_total_gpu_time);
     }
