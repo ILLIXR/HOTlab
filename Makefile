@@ -4,7 +4,7 @@ CXX=clang++-10
 CFLAGS=-Wall -fPIC
 CXXFLAGS=-std=c++17 -Wall -fPIC
 LDFLAGS=-lpthread -pthread
-NVCCFLAGS=--gpu-architecture=sm_60 -lineinfo --maxrregcount=63
+NVCCFLAGS=--std=c++17 --gpu-architecture=sm_60 -lineinfo --maxrregcount=63
 NVCCFLAGS_JETSONXAVIER=--gpu-architecture=sm_72 -lineinfo --maxrregcount=63
 INCLUDE_DIRS=-Isource -I/usr/local/cuda/include
 RM=rm -f
