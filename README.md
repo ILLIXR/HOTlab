@@ -38,11 +38,11 @@ Here is how to build it individually
 To build shared library plugin for ILLIXR:
 
 ```sh
-make hologram.dbg.so
+make plugin.dbg.so
 ```
 or
 ```sh
-make hologram.opt.so
+make plugin.opt.so
 ```
 
 To build a standalone executable for ILLIXR:
